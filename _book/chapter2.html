@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>tdd数据格式 | 背景</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.6.6">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="./chapter3.html" />
+    
+    
+    <link rel="prev" href="./chapter1.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book"
+        data-level="2"
+        data-chapter-title="tdd数据格式"
+        data-filepath="chapter2.md"
+        data-basepath="."
+        data-revision="Fri Dec 25 2015 11:28:43 GMT+0800 (CST)"
+        data-innerlanguage="">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="./index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        Introduction
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="chapter1.html">
+            
+                
+                    <a href="./chapter1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        FMPP配置
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="2" data-path="chapter2.html">
+            
+                
+                    <a href="./chapter2.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        tdd数据格式
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="chapter3.html">
+            
+                
+                    <a href="./chapter3.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        集成gulp
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="chapter4.html">
+            
+                
+                    <a href="./chapter4.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        demo总结
+                    </a>
+            
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="./" >背景</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="tdd&#x6570;&#x636E;&#x683C;&#x5F0F;">tdd&#x6570;&#x636E;&#x683C;&#x5F0F;</h1>
+<p>&#x2003;&#x2003;tdd&#x662F;fmpp&#x81EA;&#x5DF1;&#x7684;&#x4E00;&#x79CD;&#x6570;&#x636E;&#x683C;&#x5F0F;&#xFF0C;&#x8BED;&#x6CD5;&#x7C7B;&#x4F3C;json,&#x4F46;&#x53C8;&#x4E0E;json&#x4E0D;&#x540C;&#xFF0C;&#x5B83;&#x66F4;&#x50CF;&#x662F;json&#x7684;&#x6269;&#x5145;&#xFF0C;&#x8FD8;&#x652F;&#x6301;&#x5982;&#x4E0B;&#x7684;&#x683C;&#x5F0F;&#xFF1A;</p>
+<ul>
+<li><p>Strings need not be quoted if they doesn&apos;t look like a legal boolean or number value, and they don&apos;t contain:</p>
+<p>  <em>*</em> white-space: space, tab, line-break, etc.</p>
+<p>  <em>*</em> Quotation marks or apostrophe-quote: &quot;, &apos;</p>
+<p>  <em>*</em> Separator-like chars: comma (,), semicolon (;). Colon (:) is allowed without quoting the string if the string is not a key in a hash.</p>
+<p>  <em>*</em> Bracket-like chars: (, ), [, ], {, }, &lt;, &gt;</p>
+<p>  <em>*</em> Equals sign (=)</p>
+<p>  <em>*</em> Plus sign (+)</p>
+</li>
+<li><p>Line-break can be used instead of comma (,). That is, in practice, you can omit commas that would be at the end of the lines.</p>
+</li>
+<li><p>If in a hash the value is missing from a key:value pair, then the value defaults to boolean true.</p>
+</li>
+</ul>
+<p>&#x2003;&#x2003;&#x6240;&#x4EE5;&#x4EE5;&#x4E0B;&#x4E24;&#x79CD;&#x5199;&#x6CD5;&#x662F;&#x7B49;&#x540C;&#x7684;&#xFF1A;</p>
+<pre><code>{
+    &quot;user&quot;: &quot;Big Joe&quot;,
+    &quot;tall&quot;: true,
+    &quot;animals&quot;: [
+        {&quot;name&quot;: &quot;white mouse&quot;, &quot;price&quot;: 30},
+        {&quot;name&quot;: &quot;black mouse&quot;, &quot;price&quot;: 25},
+        {&quot;name&quot;: &quot;green mouse&quot;, &quot;price&quot;: 150}
+    ]
+}
+</code></pre><pre><code>{
+    user: &quot;Big Joe&quot;
+    tall
+    animals: [
+        {name: &quot;white mouse&quot;, price: 30}
+        {name: &quot;black mouse&quot;, price: 25}
+        {name: &quot;green mouse&quot;, price: 150}
+    ]
+}
+</code></pre><h2 id="references">References:</h2>
+<ol>
+<li><a href="http://fmpp.sourceforge.net/tdd.html" target="_blank">TDD - Textual Data Definition</a></li>
+</ol>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="./chapter1.html" class="navigation navigation-prev " aria-label="Previous page: FMPP配置"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./chapter3.html" class="navigation navigation-next " aria-label="Next page: 集成gulp"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="gitbook/app.js"></script>
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+    
+    <script src="gitbook/plugins/gitbook-plugin-livereload/plugin.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"livereload":{}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>
