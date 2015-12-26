@@ -71,7 +71,7 @@ private boolean needEncode() {
     return this.escapedExpression instanceof NoEncodeBuiltIn?false:(this.escapedExpression instanceof htmlBI?false:(this.escapedExpression instanceof urlBI?false:(this.escapedExpression instanceof xhtmlBI?false:(this.escapedExpression instanceof xmlBI?false:!(this.escapedExpression instanceof rtfBI)))));
 }
 ```
-&emsp;&emsp;这段代码很长， 但是只要看第一个instanceof就够了， 看到了熟悉的`NoEncodeBuildIn`， 如果是`NoEncodeBuildIn`那么就会return false,表示无需encode；这下就可以得出结论， 网易的freemarker_netease.jar将默认的`${}`操作加上了encode， 所以要不想encode， 必须加上`?no_encode`;为了确定结论的正确， 将工程的freemarker_netease.jar替换为原生的freemarker.jar， 直接输出下面的代码， 无需?no_encode， 就可以得到和上面加入?no_encode同样的效果；这也是为什么我们老的页面， 没有在最外层加入<#escape x as html>的原因；
+&emsp;&emsp;这段代码很长， 但是只要看第一个instanceof就够了， 看到了熟悉的`NoEncodeBuildIn`， 如果是`NoEncodeBuildIn`那么就会return false,表示无需encode；如果仔细看， 后面还有很多种情况return false, 那是为什么呢？ 难道除了?no_encode， 还有其他方法可以不encode? 仔细看一下这些条件， 发现如果要满足后续的条件， 则执行到此步骤之前就会被encode，例如上面的htmlBI代码段的返回值； 无需这下就可以得出结论， 网易的freemarker_netease.jar将默认的`${}`操作加上了encode， 所以要不想encode， 必须加上`?no_encode`;为了确定结论的正确， 将工程的freemarker_netease.jar替换为原生的freemarker.jar， 直接输出下面的代码， 无需?no_encode， 就可以得到和上面加入?no_encode同样的效果；这也是为什么我们老的页面， 没有在最外层加入<#escape x as html>的原因；
 ```
 <#noescape>
 <script>
