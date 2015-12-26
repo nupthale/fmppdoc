@@ -19,7 +19,68 @@ sourcefile就是模板文件， -C标识配置文件的位置， 如果当前目
 
 &emsp;&emsp;首先是输入, gulp.src指定了mock文件所在的位置， `./mock/**/*.json`可以指定mock目录下的所有json文件；接下来对这些输入文件，执行freemarker命令，只需配置一下viewRoot（ftl文件所在目录）即可；那么这么多json文件是如何与viewRoot下的ftl文件对应的呢？在图片下方位置的地方可以看到一个json文件示例，文件内需指定`tpl`属性，和`data`属性，这个`tpl`就是链接二者的桥梁，此json文件仅对`tpl`指定的ftl模板文件生效； `data`属性则无需多说，就是mock数据， json格式；
 
-&emsp;&emsp;如果你使用的是官方的`freemarker.jar`包， 利用上面的工具， 已经可以解决最初提出的问题； 但是在我们工程实际使用过程中， 还发现工程中使用的`freemarker_netease.jar`对官方的包进行了功能扩充， 其中在工程中常见的就是`?no_encode`这个buildin；解决此问题待补充....
+&emsp;&emsp;如果你使用的是官方的`freemarker.jar`包， 利用上面的工具， 已经可以解决最初提出的问题； 但是在我们工程实际使用过程中， 还发现工程中使用的`freemarker_netease.jar`对官方的包进行了功能扩充和修改， 其中在工程中常见的就是`?no_encode`这个buildin；原生freemarker不具有这个buildIn，那么这个NoEncodeBI(buildin)到底有什么功能， 下面是对此问题的调研：
+
+以如下代码段为例：
+```
+...(表示省略部分)
+<#escape x as x?html>
+...
+<#assign timeList = [{"test":"abc'123'abc"}] />
+
+<#noescape>
+<script>
+    var timeList = ${stringify(timeList![])?no_encode};
+</script>
+</#noescape>
+...
+</#escape>
+```
+1. 首先遇到这个问题， 想到了有没有什么其他原生的buildin可以替换?no_encode，经过一番尝试无果，如果不加?no_encode， 输出的结果都会变成：
+```
+var timeList = [{&quot;test&quot;:&quot;abc\&#39;123\&#39;abc&quot;}];
+```
+
+&emsp;&emsp;单引号和双引号都被encode了， 难道freemarker默认会对输出的变量encode，或者noescape对script内的变量无效？通过研究freemarker.jar的源码， 找到了`NoEncodeBuiltIn`这个类，发现了在`BuildIn`类中列出了全部的buildin，其中包含如下代码段：
+```
+builtins.put("string", new BuiltIn.stringBI());
+builtins.put("substring", new substringBI());
+builtins.put("time", new BuiltIn.dateBI(1));
+builtins.put("trim", new BuiltIn.trimBI());
+builtins.put("no_encode", new NoEncodeBuiltIn());
+```
+&emsp;&emsp;最后一个就是我们要找得no_encoe，  对应NoEncodeBuildIn这个类， 这个类里面只有一个`calculateResult`方法， 通过与其他buildin对比， 发现这个类直接将输入的字符串， 原样返回，没有做任何处理； 到这里仍然说不通为什么加了?no_encode就可以不encode；
+```
+TemplateModel calculateResult(String s, Environment env) throws TemplateException {
+    return new SimpleScalar(s);
+}
+```
+&emsp;&emsp;那么对比一下在freemarker_netease.jar中的其他buildin，发现基本上大部分都有类似如下的处理， 而不是直接返回new SimpleScalar(s)；看到SimpleScalar你可能会怀疑是不是在这里做了手脚，SimpleScalar只是负责存储value，提供一个getAsString方法，getAsString方法也是直接返回value， 没有做任何处理；
+```
+static class htmlBI extends StringBuiltIn {
+    htmlBI() {}
+
+    TemplateModel calculateResult(String s, Environment env) {
+        return new SimpleScalar(StringUtil.HTMLEnc(s));
+    }
+}
+```
+&emsp;&emsp;通过对比后，发现了其他buildin都会执行各种encode(s)才返回，这就解释了为什么在最开始尝试找其他buildin替换no_encode是行不通的；那么不加任何buildin， 直接`${stringify(timelist)}`是否可行？通过实验， 发现仍然会被encode，这样就变得清晰一些， 难道默认的freemarker就会对输出的值进行encode？在另外一个类`DollarVariable`(${}操作)中， 找到了答案：
+```
+private boolean needEncode() {
+    return this.escapedExpression instanceof NoEncodeBuiltIn?false:(this.escapedExpression instanceof htmlBI?false:(this.escapedExpression instanceof urlBI?false:(this.escapedExpression instanceof xhtmlBI?false:(this.escapedExpression instanceof xmlBI?false:!(this.escapedExpression instanceof rtfBI)))));
+}
+```
+&emsp;&emsp;这段代码很长， 但是只要看第一个instanceof就够了， 看到了熟悉的`NoEncodeBuildIn`， 如果是`NoEncodeBuildIn`那么就会return false,表示无需encode；这下就可以得出结论， 网易的freemarker_netease.jar将默认的`${}`操作加上了encode， 所以要不想encode， 必须加上`?no_encode`;为了确定结论的正确， 将工程的freemarker_netease.jar替换为原生的freemarker.jar， 直接输出下面的代码， 无需?no_encode， 就可以得到和上面加入?no_encode同样的效果；这也是为什么我们老的页面， 没有在最外层加入<#escape x as html>的原因；
+```
+<#noescape>
+<script>
+    var timeList = ${stringify(timeList![])};
+</script>
+</#noescape>
+```
+
+
 
 
 &emsp;&emsp;在实际工程中，通常会将公用的代码块提取为模块， 供每个文件include， 这样每个子页面都需要这些公用模块的mock数据，在每个json文件重复的使用这些变量，总有些麻烦， 如果注释不好， 也无法区分哪些是公用的变量， 哪些才是对应页面真正需要的值；那么联想到上面提到的fmpp提供的配置merge方法， 能解决此问题么？ 待补充......

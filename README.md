@@ -6,7 +6,7 @@
 
 &emsp;&emsp;要展示一个页面，需要满足两个条件：1.web运行环境，2. 可以解析ftl模板的工具； 如果第二点可以分离独立出来运行， 那么就可以很容易的将这个过程与现有前端构建工具集成；fmpp就是这样的工具；
 
-
+&emsp;&emsp;![开发流程](http://haitao.nos.netease.com/4957f8ba10de486f993cc5970cc2bff6.png)
 &emsp;&emsp;![freemarker](http://haitao.nos.netease.com/083569bfd55a4d23b49835076724e7b4.png)
 
 # FMPP介绍
